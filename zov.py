@@ -21,14 +21,14 @@ class MyBot(commands.Bot):
 
 bot = MyBot()
 
-# ---------- Slash-команда ----------
+# Slash-команда
 @bot.tree.command(name="zov", description="Таймер")
 @app_commands.describe(seconds="Длина работы (не более 100с)")
 async def slash_zov(interaction: discord.Interaction, seconds: int = 60):
     if seconds > 100:
         seconds = 100
     
-    await interaction.response.send_message("ZOV")
+    await interaction.response.send_message("ZOV Таймер\nZOV\n(Это 1 секунда)")
     message = await interaction.original_response()
 
     for x in range(2, seconds + 1):
