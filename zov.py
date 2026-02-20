@@ -1,16 +1,16 @@
 import discord
+from discord import app_commands
 from discord.ext import commands
 from dotenv import load_dotenv
 import os
 import asyncio
 
 load_dotenv()
-token = os.getenv("DISCORD_TOKEN")
+token = os.getenv("ZOV")
 
 intents = discord.Intents.default()
 intents.message_content = True
 
-# Для слеш-команд
 class MyBot(commands.Bot):
     def __init__(self):
         super().__init__(command_prefix=".", intents=intents)
@@ -21,24 +21,31 @@ class MyBot(commands.Bot):
 
 bot = MyBot()
 
-# Слеш-команда
-@bot.tree.command(name="zov", description="Таймер ZOV")
-async def slash_zov(interaction: discord.Interaction):
-    await interaction.response.send_message("ZOV Таймер, он считает до 1 минуты\nZOV\n(Это 1 секунда)")
+# ---------- Slash-команда ----------
+@bot.tree.command(name="zov", description="Таймер")
+@app_commands.describe(seconds="Длина работы (не более 100с)")
+async def slash_zov(interaction: discord.Interaction, seconds: int = 60):
+    if seconds > 100:
+        seconds = 100
+    
+    await interaction.response.send_message("ZOV")
     message = await interaction.original_response()
 
-    for x in range(2, 61):
+    for x in range(2, seconds + 1):
         await asyncio.sleep(1)
-        await message.edit(content="ZOV Таймер, он считает до 1 минуты\n" + ("ZOV " * x) + f"\n(Это {x} секунд)")
+        await message.edit(content=f'ZOV Таймер\n{"ZOV " * x}\n(Это {x} секунд)')
 
-# Обычная команда (.zov)
+# Обычная (.zov)
 @bot.command()
-async def zov(ctx):
-    message = await ctx.send("ZOV")
+@commands.cooldown(1, 10, commands.BucketType.user)
+async def zov(ctx, seconds: int = 60):
+    if seconds > 100:
+        seconds = 100
 
-    for x in range(2, 61):
+    message = await ctx.send("ZOV")
+    for x in range(2, seconds + 1):
         await asyncio.sleep(1)
-        await message.edit(content="ZOV Таймер, он считает до 1 минуты\n" + ("ZOV " * x) + f"\n(Это {x} секунд)")
+        await message.edit(content=f'ZOV Таймер\n{"ZOV " * x}\n(Это {x} секунд)')
 
 @bot.event
 async def on_ready():
