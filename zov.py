@@ -38,7 +38,7 @@ async def zov(ctx):
 
     for x in range(2, 61):
         await asyncio.sleep(1)
-        await message.edit(content="ZOV " * x)
+        await message.edit(content="ZOV Таймер, он считает до 1 минуты\n" + ("ZOV " * x) + f"\n(Это {x} секунд)")
 
 @bot.event
 async def on_ready():
